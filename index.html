@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <meta
+    name="description"
+    content="Explore CO₂ water dissolution results at 30, 40 and 50 Hz."
+  >
+
+  <title>CO₂ Lab | Water Optimization</title>
+
+  <link rel="stylesheet" href="style.css">
+  <script src="data.js" defer></script>
+  <script src="app.js" defer></script>
+</head>
+
+<body>
+  <header>
+    <a class="brand" href="#">
+      ◉ CO₂ LAB
+      <span>FLAMINGO / GEN 3</span>
+    </a>
+
+    <nav aria-label="Main navigation">
+      <a href="#explore">Explore</a>
+      <a href="#compare">Compare</a>
+      <a href="#dose">Dose calculator</a>
+      <a href="#method">Method</a>
+    </nav>
+  </header>
+
+  <main>
+    <section class="intro">
+      <div class="eyebrow">
+        WATER CARBONATION · EXPERIMENTAL RESULTS
+      </div>
+
+      <h1>
+        Three pump speeds.<br>
+        A clearer operating choice.
+      </h1>
+
+      <p>
+        Explore how CO₂ supply changes water uptake and gas utilization.
+        Select a setting, compare alternatives, and calculate the CO₂
+        dose delivered through carbonated mixing water.
+      </p>
+
+      <a class="primary" href="#explore">
+        Explore the results ↗
+      </a>
+
+      <div class="context">
+        GEN 3 CONFIGURATION
+        <strong>
+          Two parallel Venturi–static mixer branches
+        </strong>
+      </div>
+    </section>
+
+    <section id="explore">
+      <div class="sectionhead">
+        <div>
+          <div class="eyebrow">01 / EXPLORE</div>
+          <h2>Find your operating point.</h2>
+        </div>
+
+        <button id="download" type="button">
+          Download summary CSV ↓
+        </button>
+      </div>
+
+      <div class="toolbar">
+        <fieldset>
+          <legend>Pump speed</legend>
+          <div id="speeds" class="segments"></div>
+        </fieldset>
+
+        <label class="check">
+          <input type="checkbox" id="overlay" checked>
+          Compare all speeds
+        </label>
+
+        <label class="check">
+          <input type="checkbox" id="errors">
+          Show repeat spread (50 Hz)
+        </label>
+      </div>
+
+      <div class="flowbar">
+        <span>CO₂ setting</span>
+        <div id="flows" class="segments"></div>
+      </div>
+
+      <div class="metrics" aria-live="polite">
+        <article>
+          <span>Added CO₂ uptake</span>
+          <strong id="uptake"></strong>
+          <small>CO₂ added to each litre of water</small>
+        </article>
+
+        <article>
+          <span>Dissolution efficiency</span>
+          <strong id="efficiency"></strong>
+          <small>
+            Share of supplied CO₂ retained as added uptake
+          </small>
+        </article>
+
+        <article>
+          <span>Selected condition</span>
+          <strong id="condition"></strong>
+          <small id="repeatcount"></small>
+        </article>
+      </div>
+
+      <div class="chartgrid">
+        <article>
+          <h3>How much CO₂ does the water take up?</h3>
+          <div id="uptakechart" class="chart"></div>
+        </article>
+
+        <article>
+          <h3>How efficiently is the gas used?</h3>
+          <div id="effchart" class="chart"></div>
+        </article>
+      </div>
+
+      <div class="legend">
+        <span class="c30">● 30 Hz</span>
+        <span class="c40">▲ 40 Hz</span>
+        <span class="c50">■ 50 Hz</span>
+        <span>Click a chart point to select a condition.</span>
+      </div>
+
+      <div
+        id="pointdetail"
+        class="detail"
+        aria-live="polite"
+      ></div>
+
+      <details>
+        <summary>
+          Inspect the selected setting’s repeat readings
+        </summary>
+        <div id="repeats"></div>
+      </details>
+    </section>
+
+    <section>
+      <div class="eyebrow">THE OPERATING CHOICES</div>
+
+      <h2>More uptake is one part of the decision.</h2>
+
+      <div class="choices">
+        <button type="button" data-pick="30,17">
+          <span>30 Hz · PRACTICAL CANDIDATE</span>
+          <strong>17 L/min ↗</strong>
+          <p>
+            Higher uptake before gains taper. The highest mean
+            efficiency at this speed occurred at 15 L/min.
+          </p>
+        </button>
+
+        <button type="button" data-pick="40,17">
+          <span>40 Hz · LEADING BALANCE CANDIDATE</span>
+          <strong>17 L/min ↗</strong>
+          <p>
+            Highest reported mean efficiency across the tested
+            settings: 16.98%, with 0.2830 g/L added uptake.
+          </p>
+        </button>
+
+        <button type="button" data-pick="50,20">
+          <span>50 Hz · PRACTICAL CANDIDATE</span>
+          <strong>20 L/min ↗</strong>
+          <p>
+            Peak mean efficiency at this speed. Increasing to
+            25 L/min raises uptake by 12.7% while efficiency falls.
+          </p>
+        </button>
+      </div>
+
+      <p class="note">
+        These are provisional water-operation candidates. The proposed
+        30 Hz lower-dose and higher-dose test settings are 10 and
+        17 L/min. A minimum useful dose needs an agreed performance
+        target. Overall production selection also requires water
+        throughput and CO₂ delivery per minute.
+      </p>
+    </section>
+
+    <section id="compare">
+      <div class="eyebrow">02 / COMPARE</div>
+
+      <h2>What changes between two settings?</h2>
+
+      <div class="compareinputs">
+        <label>
+          Condition A
+          <select id="a"></select>
+        </label>
+
+        <label>
+          Condition B
+          <select id="b"></select>
+        </label>
+      </div>
+
+      <div id="comparison" aria-live="polite"></div>
+    </section>
+
+    <section id="dose">
+      <div class="eyebrow">03 / BATCH DOSING</div>
+
+      <h2>From water uptake to cement dose.</h2>
+
+      <p>
+        Use the selected operating point’s added CO₂ concentration
+        to calculate the CO₂ carried into a batch by carbonated water.
+      </p>
+
+      <div class="calculator">
+        <div>
+          <p id="doseselection"></p>
+
+          <label>
+            Cement mass (kg)
+            <input
+              type="number"
+              id="cement"
+              value="10"
+              min="0.001"
+              step="any"
+              required
+            >
+          </label>
+
+          <label>
+            Carbonated water used (L)
+            <input
+              type="number"
+              id="water"
+              value="4.3"
+              min="0"
+              step="any"
+              required
+            >
+          </label>
+
+          <label>
+            Target dose (% of cement mass)
+            <input
+              type="number"
+              id="target"
+              value="0.015"
+              min="0"
+              step="any"
+              required
+            >
+          </label>
+        </div>
+
+        <div class="doseoutput" aria-live="polite">
+          <span>Added CO₂ dose relative to cement</span>
+          <strong id="dosepercent"></strong>
+          <p id="dosemass"></p>
+          <p id="targetresult"></p>
+        </div>
+      </div>
+
+      <p class="note">
+        Dose (%) = uptake (g/L) × carbonated water (L)
+        ÷ cement mass (kg) ÷ 10.
+        The calculation assumes the selected concentration is retained
+        until mixing. It represents added CO₂ delivered through water.
+        Mineralized CO₂ requires a separate measurement.
+        Native carbon in untreated water is excluded.
+      </p>
+    </section>
+
+    <section id="method">
+      <div class="eyebrow">04 / UNDERSTAND THE TESTS</div>
+
+      <h2>The method, without three reports.</h2>
+
+      <div class="methodgrid">
+        <article>
+          <h3>What changed?</h3>
+          <p>
+            Pump speeds of 30, 40 and 50 Hz were investigated.
+            At each speed, CO₂ flowmeter settings were 5, 10, 15,
+            17, 20 and 25 L/min. Actual water flow, pressure and
+            temperature were recorded responses.
+          </p>
+        </article>
+
+        <article>
+          <h3>What is uptake?</h3>
+          <p>
+            PHREEQC-derived added CO₂ concentration, based on the
+            supplied water chemistry and measured conditions.
+            Multiplying added concentration by collected water
+            volume gives the added CO₂ mass retained in that water.
+          </p>
+        </article>
+
+        <article>
+          <h3>What is efficiency?</h3>
+          <p>
+            Added CO₂ mass in collected water divided by cylinder
+            mass loss, multiplied by 100. Flowmeter settings identify
+            test conditions. Cylinder mass loss provides the supplied
+            CO₂ mass used in the efficiency calculation.
+          </p>
+        </article>
+
+        <article>
+          <h3>What do error bars show?</h3>
+          <p>
+            One sample standard deviation above and below the mean.
+            This describes variation between repeats. It does not
+            represent full measurement uncertainty. At 50 Hz, there
+            were two repeats at 5 L/min and three at each other setting.
+          </p>
+        </article>
+      </div>
+
+      <details>
+        <summary>Sources and limits of this summary</summary>
+
+        <p>
+          The 50 Hz results and repeat statistics come from the supplied
+          50HZ.xlsx workbook. The 30 and 40 Hz values are summary means
+          from the earlier analysis. Their individual repeats and
+          standard deviations are not included in this version.
+        </p>
+
+        <p>
+          Collected water mass is converted to approximate volume using
+          a density of 1 kg/L. Water chemistry, temperature, pressure,
+          flow and measurement conditions should be considered when
+          comparing separate test series. Small cylinder mass changes
+          are sensitive to weighing resolution.
+        </p>
+
+        <p>
+          This page presents tested settings. It does not predict
+          performance at untested conditions.
+        </p>
+      </details>
+
+      <details>
+        <summary>Why investigate 50 Hz for Flamingo?</summary>
+
+        <p>
+          The wider question is whether two parallel Venturi–static
+          mixer branches at 50 Hz can approach the dissolution
+          performance of one pair at 20 Hz while increasing water
+          throughput.
+        </p>
+
+        <p>
+          That comparison is pending. Water throughput, added uptake,
+          gas consumption and efficiency need to be assessed together.
+        </p>
+      </details>
+    </section>
+
+    <footer>
+      <span>CO₂ LAB / FLAMINGO WATER OPTIMIZATION</span>
+      <span>Experimental findings · Provisional operating choices</span>
+    </footer>
+  </main>
+
+  <div id="tooltip" role="tooltip" hidden></div>
+</body>
+</html>
