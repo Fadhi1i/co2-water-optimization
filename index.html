@@ -6,375 +6,1157 @@
 
   <meta
     name="description"
-    content="Explore CO₂ water dissolution results at 30, 40 and 50 Hz."
+    content="Compare CO₂ dissolution, gas utilisation and water delivery using individual trials at 20, 30, 40 and 50 Hz."
   >
 
-  <title>CO₂ Lab | Water Optimization</title>
+  <meta name="theme-color" content="#163d35">
+
+  <title>CO₂ Lab | Water Optimisation</title>
 
   <link rel="stylesheet" href="style.css">
+
   <script src="data.js" defer></script>
   <script src="app.js" defer></script>
 </head>
 
 <body>
-  <header>
-    <a class="brand" href="#">
-      ◉ CO₂ LAB
-      <span>FLAMINGO / GEN 3</span>
+  <a class="skip-link" href="#main-content">
+    Skip to results
+  </a>
+
+  <header class="site-header">
+    <a class="brand" href="#" aria-label="CO₂ Lab home">
+      <span class="brand-symbol" aria-hidden="true">◉</span>
+
+      <span class="brand-text">
+        CO₂ LAB
+        <small>WATER OPTIMISATION</small>
+      </span>
     </a>
 
-    <nav aria-label="Main navigation">
-      <a href="#explore">Explore</a>
+    <nav class="main-nav" aria-label="Main navigation">
+      <a href="#explore">Results</a>
+      <a href="#delivery">Water delivery</a>
       <a href="#compare">Compare</a>
       <a href="#dose">Dose calculator</a>
       <a href="#method">Method</a>
     </nav>
   </header>
 
-  <main>
-    <section class="intro">
+  <main id="main-content">
+    <!-- INTRODUCTION -->
+
+    <section class="intro" aria-labelledby="page-title">
       <div class="eyebrow">
-        WATER CARBONATION · EXPERIMENTAL RESULTS
+        GEN 3 / WATER CARBONATION TRIALS
       </div>
 
-      <h1>
-        Three pump speeds.<br>
-        A clearer operating choice.
+      <h1 id="page-title">
+        Four speeds.<br>
+        See the trade-offs.
       </h1>
 
-      <p>
-        Explore how CO₂ supply changes water uptake and gas utilization.
-        Select a setting, compare alternatives, and calculate the CO₂
-        dose delivered through carbonated mixing water.
+      <p class="intro-description">
+        Compare how much CO₂ enters the water, how efficiently
+        the supplied gas is used, and how water delivery changes
+        across the tested operating conditions.
       </p>
 
-      <a class="primary" href="#explore">
-        Explore the results ↗
-      </a>
+      <div class="intro-footer">
+        <p class="configuration">
+          <span class="label">TEST CONFIGURATION</span>
+          <strong>
+            Two parallel Venturi-static mixer branches
+          </strong>
+        </p>
 
-      <div class="context">
-        GEN 3 CONFIGURATION
-        <strong>
-          Two parallel Venturi–static mixer branches
-        </strong>
+        <a
+          class="text-link"
+          href="https://co2-batch-planner.vercel.app"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Open batch planner ↗
+        </a>
       </div>
     </section>
 
-    <section id="explore">
-      <div class="sectionhead">
+    <!-- RESULTS -->
+
+    <section
+      id="explore"
+      class="page-section"
+      aria-labelledby="explore-title"
+    >
+      <div class="section-heading">
         <div>
-          <div class="eyebrow">01 / EXPLORE</div>
-          <h2>Find your operating point.</h2>
+          <div class="eyebrow">01 / EXPLORE THE RESULTS</div>
+          <h2 id="explore-title">
+            Choose an operating condition.
+          </h2>
         </div>
 
-        <button id="download" type="button">
-          Download summary CSV ↓
+        <button
+          id="download"
+          class="button button-secondary"
+          type="button"
+        >
+          Download summary CSV
         </button>
       </div>
 
-      <div class="toolbar">
-        <fieldset>
+      <div class="selection-panel">
+        <fieldset class="selection-group">
           <legend>Pump speed</legend>
-          <div id="speeds" class="segments"></div>
+
+          <div
+            id="speeds"
+            class="segments speed-segments"
+          ></div>
         </fieldset>
 
-        <label class="check">
-          <input type="checkbox" id="overlay" checked>
-          Compare all speeds
-        </label>
+        <fieldset class="selection-group">
+          <legend>CO₂ flowmeter setting</legend>
 
-        <label class="check">
-          <input type="checkbox" id="errors">
-          Show repeat spread (50 Hz)
-        </label>
+          <div
+            id="flows"
+            class="segments flow-segments"
+          ></div>
+        </fieldset>
       </div>
 
-      <div class="flowbar">
-        <span>CO₂ setting</span>
-        <div id="flows" class="segments"></div>
-      </div>
+      <p id="selection-source" class="source-note"></p>
 
       <div class="metrics" aria-live="polite">
-        <article>
-          <span>Added CO₂ uptake</span>
-          <strong id="uptake"></strong>
-          <small>CO₂ added to each litre of water</small>
+        <article class="metric">
+          <span class="metric-label">
+            CO₂ added to water
+          </span>
+
+          <strong id="uptake">Not loaded</strong>
+
+          <small>
+            Additional dissolved CO₂ above the untreated-water
+            baseline, calculated using PHREEQC.
+          </small>
+
+          <span
+            id="uptake-status"
+            class="metric-status"
+          ></span>
         </article>
 
-        <article>
-          <span>Dissolution efficiency</span>
-          <strong id="efficiency"></strong>
-          <small>
-            Share of supplied CO₂ retained as added uptake
+        <article class="metric">
+          <span class="metric-label">
+            Supplied CO₂ dissolved
+          </span>
+
+          <strong id="efficiency">Not loaded</strong>
+
+          <small id="efficiency-basis">
+            Added dissolved CO₂ mass divided by cylinder
+            mass loss, expressed as a percentage.
           </small>
         </article>
 
-        <article>
-          <span>Selected condition</span>
-          <strong id="condition"></strong>
+        <article class="metric">
+          <span
+            id="water-metric-label"
+            class="metric-label"
+          >
+            Water mass used
+          </span>
+
+          <strong id="waterdelivery">Not loaded</strong>
+
+          <small id="waterdetail"></small>
+
+          <span
+            id="water-status"
+            class="metric-status"
+          ></span>
+        </article>
+
+        <article class="metric metric-condition">
+          <span class="metric-label">
+            Selected condition
+          </span>
+
+          <strong id="condition">Not loaded</strong>
           <small id="repeatcount"></small>
         </article>
       </div>
 
-      <div class="chartgrid">
-        <article>
-          <h3>How much CO₂ does the water take up?</h3>
-          <div id="uptakechart" class="chart"></div>
-        </article>
+      <p
+        id="condition-insight"
+        class="insight"
+        aria-live="polite"
+      ></p>
 
-        <article>
-          <h3>How efficiently is the gas used?</h3>
-          <div id="effchart" class="chart"></div>
-        </article>
+      <div class="chart-options">
+        <label class="checkbox-label">
+          <input type="checkbox" id="overlay" checked>
+          <span>Compare all speeds</span>
+        </label>
+
+        <label class="checkbox-label">
+          <input type="checkbox" id="errors">
+          <span>Show repeat spread</span>
+        </label>
+
+        <label class="checkbox-label">
+          <input type="checkbox" id="show-repeats">
+          <span>Show individual trials</span>
+        </label>
+
+        <label class="checkbox-label">
+          <input type="checkbox" id="show-total">
+          <span>Show total dissolved carbon</span>
+        </label>
       </div>
 
-      <div class="legend">
-        <span class="c30">● 30 Hz</span>
-        <span class="c40">▲ 40 Hz</span>
-        <span class="c50">■ 50 Hz</span>
-        <span>Click a chart point to select a condition.</span>
+      <form
+        id="threshold-form"
+        class="threshold-form"
+        novalidate
+      >
+        <div class="threshold-field">
+          <label for="uptake-threshold">
+            Uptake target
+            <span class="optional-label">(optional, g/L)</span>
+          </label>
+
+          <div class="threshold-input-row">
+            <input
+              id="uptake-threshold"
+              name="uptakeThreshold"
+              type="number"
+              min="0"
+              step="any"
+              inputmode="decimal"
+              placeholder="No target set"
+              aria-describedby="threshold-help threshold-error"
+            >
+
+            <button
+              class="button button-secondary"
+              type="submit"
+            >
+              Apply target
+            </button>
+          </div>
+        </div>
+
+        <p id="threshold-help" class="field-help">
+          Compare uptake with your own target.
+          Leave blank and apply to remove it.
+        </p>
+
+        <p
+          id="threshold-error"
+          class="field-error"
+          hidden
+        ></p>
+
+        <p
+          id="threshold-status"
+          class="field-help"
+          role="status"
+        ></p>
+      </form>
+
+      <div class="chart-grid">
+        <figure class="chart-figure">
+          <div class="figure-heading">
+            <h3>How much CO₂ enters the water?</h3>
+            <span class="figure-unit">g/L</span>
+          </div>
+
+          <div id="uptakechart" class="chart"></div>
+
+          <figcaption>
+            Lines connect tested means. They do not establish
+            performance between settings. Total dissolved carbon,
+            when enabled, includes the untreated-water baseline.
+          </figcaption>
+        </figure>
+
+        <figure class="chart-figure">
+          <div class="figure-heading">
+            <h3>How efficiently is the gas used?</h3>
+            <span class="figure-unit">%</span>
+          </div>
+
+          <div id="effchart" class="chart"></div>
+
+          <figcaption>
+            Efficiencies use weighed collections at 20, 40 and
+            50 Hz. At 30 Hz, they use an assumed 8 kg of water
+            per collection.
+          </figcaption>
+        </figure>
       </div>
 
       <div
+        class="chart-legend"
+        aria-label="Pump speed legend"
+      >
+        <span class="legend-item speed-20">
+          <span aria-hidden="true">◆</span>
+          20 Hz
+        </span>
+
+        <span class="legend-item speed-30">
+          <span aria-hidden="true">●</span>
+          30 Hz
+        </span>
+
+        <span class="legend-item speed-40">
+          <span aria-hidden="true">▲</span>
+          40 Hz
+        </span>
+
+        <span class="legend-item speed-50">
+          <span aria-hidden="true">■</span>
+          50 Hz
+        </span>
+
+        <span class="legend-item total-series" hidden>
+          <span aria-hidden="true">◇</span>
+          Total dissolved carbon, selected speed
+        </span>
+      </div>
+
+      <p id="chart-note" class="note">
+        Select a chart point to inspect that condition.
+        Individual trials are available for every speed.
+        Repeat-spread bars show one sample standard deviation.
+      </p>
+
+      <p
         id="pointdetail"
         class="detail"
         aria-live="polite"
-      ></div>
+      ></p>
 
-      <details>
+      <details class="data-details">
         <summary>
-          Inspect the selected setting’s repeat readings
+          Inspect the selected condition's individual trials
         </summary>
+
         <div id="repeats"></div>
       </details>
     </section>
 
-    <section>
-      <div class="eyebrow">THE OPERATING CHOICES</div>
+    <!-- WATER DELIVERY -->
 
-      <h2>More uptake is one part of the decision.</h2>
+    <section
+      id="delivery"
+      class="page-section"
+      aria-labelledby="delivery-title"
+    >
+      <div class="section-heading">
+        <div>
+          <div class="eyebrow">02 / CHECK WATER DELIVERY</div>
 
-      <div class="choices">
-        <button type="button" data-pick="30,17">
-          <span>30 Hz · PRACTICAL CANDIDATE</span>
-          <strong>17 L/min ↗</strong>
-          <p>
-            Higher uptake before gains taper. The highest mean
-            efficiency at this speed occurred at 15 L/min.
-          </p>
-        </button>
+          <h2 id="delivery-title">
+            Concentration is only part of the result.
+          </h2>
+        </div>
 
-        <button type="button" data-pick="40,17">
-          <span>40 Hz · LEADING BALANCE CANDIDATE</span>
-          <strong>17 L/min ↗</strong>
-          <p>
-            Highest reported mean efficiency across the tested
-            settings: 16.98%, with 0.2830 g/L added uptake.
-          </p>
-        </button>
-
-        <button type="button" data-pick="50,20">
-          <span>50 Hz · PRACTICAL CANDIDATE</span>
-          <strong>20 L/min ↗</strong>
-          <p>
-            Peak mean efficiency at this speed. Increasing to
-            25 L/min raises uptake by 12.7% while efficiency falls.
-          </p>
-        </button>
+        <span
+          id="delivery-speed"
+          class="selection-label"
+        ></span>
       </div>
 
-      <p class="note">
-        These are provisional water-operation candidates. The proposed
-        30 Hz lower-dose and higher-dose test settings are 10 and
-        17 L/min. A minimum useful dose needs an agreed performance
-        target. Overall production selection also requires water
-        throughput and CO₂ delivery per minute.
+      <p class="section-description">
+        These charts follow the pump speed selected above.
+        The two flowmeter indications are shown separately
+        from the water mass used in the calculations.
       </p>
+
+      <p
+        id="delivery-note"
+        class="insight"
+        aria-live="polite"
+      ></p>
+
+      <div class="chart-grid">
+        <figure class="chart-figure">
+          <div class="figure-heading">
+            <h3>Before injection and after mixing</h3>
+            <span class="figure-unit">L/min indicated</span>
+          </div>
+
+          <div id="waterflowchart" class="chart"></div>
+
+          <div class="chart-legend">
+            <span class="legend-item flow-upstream">
+              <span aria-hidden="true">●</span>
+              Point 1: before CO₂ injection
+            </span>
+
+            <span class="legend-item flow-downstream">
+              <span aria-hidden="true">■</span>
+              Point 2: after mixers
+            </span>
+          </div>
+
+          <figcaption>
+            Separate Point 1 and Point 2 readings are available
+            for all four speeds. The readings remain as recorded;
+            they are not automatically swapped or averaged
+            into a verified water-flow value.
+          </figcaption>
+        </figure>
+
+        <figure class="chart-figure">
+          <div class="figure-heading">
+            <h3 id="water-chart-title">
+              Water collected against the setpoint
+            </h3>
+
+            <span class="figure-unit">kg</span>
+          </div>
+
+          <div id="deliverychart" class="chart"></div>
+
+          <div
+            id="water-assumption-legend"
+            class="chart-legend"
+            hidden
+          >
+            <span class="legend-item speed-30">
+              <span aria-hidden="true">○</span>
+              Assumed water mass: 8 kg per collection
+            </span>
+          </div>
+
+          <figcaption id="water-chart-caption">
+            Water collections were weighed at 20, 40 and 50 Hz.
+            At 30 Hz, 8 kg is assumed per collection. An assumed
+            match with the setpoint does not verify delivery accuracy.
+          </figcaption>
+        </figure>
+
+        <figure class="chart-figure chart-wide">
+          <div class="figure-heading">
+            <h3>CO₂ supplied and dissolved per collection</h3>
+            <span class="figure-unit">g per collection</span>
+          </div>
+
+          <div id="gaschart" class="chart"></div>
+
+          <div class="chart-legend">
+            <span class="legend-item gas-supplied">
+              <span aria-hidden="true">■</span>
+              Supplied: cylinder mass loss
+            </span>
+
+            <span class="legend-item gas-dissolved">
+              <span aria-hidden="true">●</span>
+              Additional dissolved CO₂
+            </span>
+          </div>
+
+          <figcaption id="gas-chart-caption">
+            Dissolved masses use each collection's water volume.
+            For 30 Hz, that volume is assumed from 8 kg of water.
+            Collections can differ in water mass and duration;
+            these quantities are not delivery rates per minute.
+          </figcaption>
+        </figure>
+      </div>
     </section>
 
-    <section id="compare">
-      <div class="eyebrow">02 / COMPARE</div>
+    <!-- COMPARISON -->
 
-      <h2>What changes between two settings?</h2>
+    <section
+      id="compare"
+      class="page-section"
+      aria-labelledby="compare-title"
+    >
+      <div class="section-heading">
+        <div>
+          <div class="eyebrow">03 / COMPARE CONDITIONS</div>
 
-      <div class="compareinputs">
-        <label>
+          <h2 id="compare-title">
+            What changes between two settings?
+          </h2>
+        </div>
+      </div>
+
+      <div class="comparison-inputs">
+        <label for="a">
           Condition A
           <select id="a"></select>
         </label>
 
-        <label>
+        <label for="b">
           Condition B
           <select id="b"></select>
         </label>
       </div>
 
-      <div id="comparison" aria-live="polite"></div>
+      <div
+        id="comparison"
+        class="comparison-output"
+        aria-live="polite"
+      ></div>
+
+      <p class="note">
+        Water chemistry and operating conditions can differ
+        between test series. At 30 Hz, water mass is assumed,
+        so the corresponding dissolved masses and efficiencies
+        depend on that assumption. Differences between means
+        alone do not establish statistical significance.
+      </p>
     </section>
 
-    <section id="dose">
-      <div class="eyebrow">03 / BATCH DOSING</div>
+    <!-- OPERATING CHOICES -->
 
-      <h2>From water uptake to cement dose.</h2>
+    <section
+      class="page-section"
+      aria-labelledby="choices-title"
+    >
+      <div class="eyebrow">READ THE TRADE-OFFS</div>
 
-      <p>
-        Use the selected operating point’s added CO₂ concentration
-        to calculate the CO₂ carried into a batch by carbonated water.
+      <h2 id="choices-title">
+        A useful setting depends on the objective.
+      </h2>
+
+      <div class="choices-grid">
+        <button
+          type="button"
+          class="choice-card speed-20"
+          data-pick="20,10"
+        >
+          <span class="choice-label">
+            20 Hz / EFFICIENCY REFERENCE
+          </span>
+
+          <strong>10 L/min ↗</strong>
+
+          <p>
+            Highest mean efficiency at 20 Hz:
+            approximately 12.63%.
+            Average weighed water collection was 10.13 kg
+            against the 10 kg setpoint.
+          </p>
+        </button>
+
+        <button
+          type="button"
+          class="choice-card speed-30"
+          data-pick="30,17"
+        >
+          <span class="choice-label">
+            30 Hz / HIGHER-UPTAKE CANDIDATE
+          </span>
+
+          <strong>17 L/min ↗</strong>
+
+          <p>
+            Mean added uptake of approximately 0.2762 g/L.
+            The highest mean efficiency at this speed occurs
+            at 15 L/min. Water mass is assumed at 8 kg
+            per collection.
+          </p>
+        </button>
+
+        <button
+          type="button"
+          class="choice-card speed-40"
+          data-pick="40,17"
+        >
+          <span class="choice-label">
+            40 Hz / EFFICIENCY CANDIDATE
+          </span>
+
+          <strong>17 L/min ↗</strong>
+
+          <p>
+            Highest mean efficiency among the tested
+            settings: approximately 16.98%, with
+            0.2830 g/L added uptake.
+            Inspect water delivery alongside efficiency.
+          </p>
+        </button>
+
+        <button
+          type="button"
+          class="choice-card speed-50"
+          data-pick="50,20"
+        >
+          <span class="choice-label">
+            50 Hz / EFFICIENCY CANDIDATE
+          </span>
+
+          <strong>20 L/min ↗</strong>
+
+          <p>
+            Highest mean efficiency at 50 Hz:
+            approximately 14.01%.
+            Increasing to 25 L/min raises concentration
+            while reducing efficiency.
+          </p>
+        </button>
+      </div>
+
+      <p class="note">
+        These are comparison points from the trials.
+        Overall production selection also requires reliable
+        water delivery, throughput and CO₂ delivery per minute.
+        No energy-consumption comparison is included.
+      </p>
+    </section>
+
+    <!-- DOSE CALCULATOR -->
+
+    <section
+      id="dose"
+      class="page-section dose-section"
+      aria-labelledby="dose-title"
+    >
+      <div class="section-heading">
+        <div>
+          <div class="eyebrow">04 / CALCULATE A BATCH DOSE</div>
+
+          <h2 id="dose-title">
+            Turn water uptake into a cement dose.
+          </h2>
+        </div>
+      </div>
+
+      <p class="section-description">
+        Use the selected condition's added CO₂ concentration.
+        Edit your inputs, then click Calculate dose or press Enter.
+        Editing alone will not recalculate the result.
       </p>
 
-      <div class="calculator">
-        <div>
-          <p id="doseselection"></p>
+      <p
+        id="doseselection"
+        class="selection-summary"
+      ></p>
 
-          <label>
-            Cement mass (kg)
+      <div class="calculator-layout">
+        <form
+          id="dose-form"
+          class="calculator-inputs"
+          novalidate
+        >
+          <div
+            id="dose-errors"
+            class="validation-summary"
+            role="alert"
+            hidden
+          ></div>
+
+          <div class="form-field">
+            <label for="cement">
+              Cement mass
+              <span class="input-unit-label">kg</span>
+            </label>
+
             <input
-              type="number"
               id="cement"
+              name="cement"
+              type="number"
               value="10"
               min="0.001"
               step="any"
+              inputmode="decimal"
               required
+              aria-describedby="cement-help cement-error"
             >
-          </label>
 
-          <label>
-            Carbonated water used (L)
+            <p id="cement-help" class="field-help">
+              Enter the cement mass in the concrete batch.
+            </p>
+
+            <p
+              id="cement-error"
+              class="field-error"
+              hidden
+            ></p>
+          </div>
+
+          <div class="form-field">
+            <label for="water">
+              Carbonated water actually used
+              <span class="input-unit-label">L</span>
+            </label>
+
             <input
-              type="number"
               id="water"
+              name="water"
+              type="number"
               value="4.3"
               min="0"
               step="any"
+              inputmode="decimal"
               required
+              aria-describedby="water-help water-error"
             >
-          </label>
 
-          <label>
-            Target dose (% of cement mass)
+            <p id="water-help" class="field-help">
+              Enter the carbonated water volume delivered
+              into your batch. Do not automatically substitute
+              the carbonation system's setpoint.
+            </p>
+
+            <p
+              id="water-error"
+              class="field-error"
+              hidden
+            ></p>
+          </div>
+
+          <div class="form-field">
+            <label for="target">
+              Target added CO₂ dose
+              <span class="input-unit-label">
+                % of cement mass
+              </span>
+            </label>
+
             <input
-              type="number"
               id="target"
+              name="target"
+              type="number"
               value="0.015"
               min="0"
               step="any"
+              inputmode="decimal"
               required
+              aria-describedby="target-help target-error"
             >
-          </label>
-        </div>
 
-        <div class="doseoutput" aria-live="polite">
-          <span>Added CO₂ dose relative to cement</span>
-          <strong id="dosepercent"></strong>
-          <p id="dosemass"></p>
-          <p id="targetresult"></p>
+            <p id="target-help" class="field-help">
+              Enter a percentage. For example, enter 0.015
+              for a target of 0.015%. Zero is allowed.
+            </p>
+
+            <p
+              id="target-error"
+              class="field-error"
+              hidden
+            ></p>
+          </div>
+
+          <button
+            id="calculate-inline"
+            class="button button-primary"
+            type="submit"
+          >
+            Calculate dose
+          </button>
+        </form>
+
+        <div
+          id="dose-results"
+          class="calculator-results"
+          aria-labelledby="dose-results-title"
+        >
+          <div class="results-heading">
+            <h3 id="dose-results-title" tabindex="-1">
+              Calculated dose
+            </h3>
+
+            <span
+              id="dose-state"
+              class="calculation-state"
+              role="status"
+            >
+              Ready to calculate
+            </span>
+          </div>
+
+          <div id="dose-placeholder" class="empty-state">
+            <strong>Your result will appear here.</strong>
+
+            <p>
+              Enter your batch quantities and calculate.
+              Clearing or editing a field will not run
+              the calculation automatically.
+            </p>
+          </div>
+
+          <div id="dose-result-content" hidden>
+            <span class="result-label">
+              Added CO₂ dose relative to cement mass
+            </span>
+
+            <strong
+              id="dosepercent"
+              class="dose-value"
+            ></strong>
+
+            <p id="dosemass"></p>
+
+            <p
+              id="dose-target-status"
+              class="target-status"
+            ></p>
+
+            <div class="result-divider"></div>
+
+            <h4>Against your target</h4>
+            <p id="targetresult"></p>
+
+            <p
+              id="dose-calculation-basis"
+              class="calculation-basis"
+            ></p>
+          </div>
         </div>
       </div>
 
       <p class="note">
-        Dose (%) = uptake (g/L) × carbonated water (L)
+        Dose (%) = added uptake (g/L) × carbonated water (L)
         ÷ cement mass (kg) ÷ 10.
-        The calculation assumes the selected concentration is retained
-        until mixing. It represents added CO₂ delivered through water.
-        Mineralized CO₂ requires a separate measurement.
-        Native carbon in untreated water is excluded.
+        This assumes that the selected concentration is retained
+        until mixing. It represents added dissolved CO₂
+        delivered through water. Mineralised CO₂ requires
+        a separate measurement.
       </p>
     </section>
 
-    <section id="method">
-      <div class="eyebrow">04 / UNDERSTAND THE TESTS</div>
+    <!-- METHOD -->
 
-      <h2>The method, without three reports.</h2>
+    <section
+      id="method"
+      class="page-section"
+      aria-labelledby="method-title"
+    >
+      <div class="eyebrow">05 / UNDERSTAND THE DATA</div>
 
-      <div class="methodgrid">
+      <h2 id="method-title">
+        What the numbers mean.
+      </h2>
+
+      <div class="method-grid">
         <article>
-          <h3>What changed?</h3>
+          <h3>Added uptake and total carbon</h3>
+
           <p>
-            Pump speeds of 30, 40 and 50 Hz were investigated.
-            At each speed, CO₂ flowmeter settings were 5, 10, 15,
-            17, 20 and 25 L/min. Actual water flow, pressure and
-            temperature were recorded responses.
+            Added uptake excludes carbon already present
+            in untreated water. Total dissolved inorganic
+            carbon includes that baseline and is expressed
+            here as CO₂ equivalent. Both concentrations
+            come from the supplied PHREEQC results.
           </p>
         </article>
 
         <article>
-          <h3>What is uptake?</h3>
+          <h3>Dissolution efficiency</h3>
+
           <p>
-            PHREEQC-derived added CO₂ concentration, based on the
-            supplied water chemistry and measured conditions.
-            Multiplying added concentration by collected water
-            volume gives the added CO₂ mass retained in that water.
+            Additional dissolved CO₂ mass divided by cylinder
+            mass loss, multiplied by 100. Setting values are
+            arithmetic means of the individual efficiencies.
+            The 30 Hz calculation uses an assumed water
+            collection of 8 kg.
           </p>
         </article>
 
         <article>
-          <h3>What is efficiency?</h3>
+          <h3>Repeat spread</h3>
+
           <p>
-            Added CO₂ mass in collected water divided by cylinder
-            mass loss, multiplied by 100. Flowmeter settings identify
-            test conditions. Cylinder mass loss provides the supplied
-            CO₂ mass used in the efficiency calculation.
+            Error bars show one sample standard deviation
+            above and below the mean. They describe variation
+            between individual trials, rather than full
+            measurement uncertainty. Individual trials are
+            available for every speed.
           </p>
         </article>
 
         <article>
-          <h3>What do error bars show?</h3>
+          <h3>Water delivery</h3>
+
           <p>
-            One sample standard deviation above and below the mean.
-            This describes variation between repeats. It does not
-            represent full measurement uncertainty. At 50 Hz, there
-            were two repeats at 5 L/min and three at each other setting.
+            Water collections were independently weighed
+            at 20, 40 and 50 Hz. At 30 Hz, the water mass is
+            assumed at 8 kg per collection. That assumption
+            does not verify delivery accuracy or water-mass
+            repeatability.
           </p>
         </article>
       </div>
 
-      <details>
-        <summary>Sources and limits of this summary</summary>
+      <details class="data-details">
+        <summary>Data coverage and sources</summary>
 
-        <p>
-          The 50 Hz results and repeat statistics come from the supplied
-          50HZ.xlsx workbook. The 30 and 40 Hz values are summary means
-          from the earlier analysis. Their individual repeats and
-          standard deviations are not included in this version.
+        <div class="table-wrap">
+          <table>
+            <caption>
+              59 individual trials across four pump speeds
+            </caption>
+
+            <thead>
+              <tr>
+                <th scope="col">Speed</th>
+                <th scope="col">Trials</th>
+                <th scope="col">Water mass basis</th>
+                <th scope="col">Separate flowmeters</th>
+                <th scope="col">Water setpoint</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              <tr>
+                <th scope="row">20 Hz</th>
+                <td>17</td>
+                <td>Independently weighed</td>
+                <td>Recorded</td>
+                <td>10 kg</td>
+              </tr>
+
+              <tr>
+                <th scope="row">30 Hz</th>
+                <td>13</td>
+                <td>Assumed: 8 kg per collection</td>
+                <td>Recorded</td>
+                <td>8 kg</td>
+              </tr>
+
+              <tr>
+                <th scope="row">40 Hz</th>
+                <td>12</td>
+                <td>Independently weighed</td>
+                <td>Recorded</td>
+                <td>10 kg</td>
+              </tr>
+
+              <tr>
+                <th scope="row">50 Hz</th>
+                <td>17</td>
+                <td>Independently weighed</td>
+                <td>Recorded</td>
+                <td>10 kg</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <p class="note">
+          At 20 and 50 Hz, there are two trials at 5 L/min
+          and three at every other setting. At 30 Hz,
+          there are three trials at 5 L/min and two at every
+          other setting. At 40 Hz, there are two trials
+          at each setting.
         </p>
 
-        <p>
-          Collected water mass is converted to approximate volume using
-          a density of 1 kg/L. Water chemistry, temperature, pressure,
-          flow and measurement conditions should be considered when
-          comparing separate test series. Small cylinder mass changes
-          are sensitive to weighing resolution.
-        </p>
-
-        <p>
-          This page presents tested settings. It does not predict
-          performance at untested conditions.
+        <p class="note">
+          The 20 and 30 Hz records use the supplied trial
+          tables. The 40 Hz records use the corrected table.
+          The 50 Hz records use the original workbook.
+          All setting averages are recalculated from
+          individual trials, so small differences from
+          previously rounded summaries may occur.
         </p>
       </details>
 
-      <details>
-        <summary>Why investigate 50 Hz for Flamingo?</summary>
+      <details class="data-details">
+        <summary>The 30 Hz water-mass assumption</summary>
 
         <p>
-          The wider question is whether two parallel Venturi–static
-          mixer branches at 50 Hz can approach the dissolution
-          performance of one pair at 20 Hz while increasing water
-          throughput.
+          Collected water was not independently recorded
+          on the scale during the 30 Hz trial series.
+          An 8 kg water collection is therefore assumed
+          for each trial, matching the configured setpoint.
         </p>
 
         <p>
-          That comparison is pending. Water throughput, added uptake,
-          gas consumption and efficiency need to be assessed together.
+          This assumption is used to calculate dissolved
+          CO₂ masses and dissolution efficiency.
+          It does not change the supplied PHREEQC
+          uptake concentration.
         </p>
+
+        <p>
+          A zero difference between the assumed mass and
+          setpoint is not presented as measured delivery
+          accuracy. Likewise, identical assumed masses
+          are not evidence of measured repeatability.
+        </p>
+      </details>
+
+      <details class="data-details">
+        <summary>Why the 20 Hz water-delivery issue matters</summary>
+
+        <p>
+          The water setpoint stayed at 10 kg, but collected
+          water mass fell as CO₂ supply increased.
+          At the 25 L/min CO₂ setting, average collected
+          water was approximately 7.71 kg.
+        </p>
+
+        <p>
+          Heavy bubbling was observed. Gas interference
+          in the downstream flowmeter and changes in
+          hydraulic conditions are possible explanations.
+          Their contributions have not been confirmed
+          by these trials.
+        </p>
+
+        <p>
+          The downstream meter controls batch shut-off,
+          so its registered volume should be checked
+          against independently weighed collections.
+          The meters also disagreed at lower gas settings;
+          their difference cannot be attributed entirely
+          to increasing gas supply.
+        </p>
+      </details>
+
+      <details class="data-details">
+        <summary>Calculations and interpretation limits</summary>
+
+        <ul class="method-list">
+          <li>
+            Supplied CO₂ mass is cylinder weight loss
+            in kilograms multiplied by 1,000.
+          </li>
+
+          <li>
+            Water mass is converted to approximate volume
+            using a density of 1 kg/L.
+          </li>
+
+          <li>
+            Additional dissolved CO₂ mass is uptake
+            concentration multiplied by the collection's
+            water volume.
+          </li>
+
+          <li>
+            Total dissolved carbon mass is total
+            concentration multiplied by the collection's
+            water volume, expressed as CO₂ equivalent.
+          </li>
+
+          <li>
+            Dissolved masses are calculated for each
+            individual trial before setting averages
+            are calculated.
+          </li>
+
+          <li>
+            Mean dissolution efficiency is the arithmetic
+            mean of individual trial efficiencies.
+          </li>
+
+          <li>
+            PHREEQC concentrations depend on the supplied
+            water chemistry and measured conditions.
+          </li>
+
+          <li>
+            Small cylinder weight changes are sensitive
+            to weighing resolution.
+          </li>
+
+          <li>
+            Point 1 and Point 2 readings remain as
+            recorded. Their average is not treated as
+            independently verified water flow.
+          </li>
+
+          <li>
+            Recorded pressure values are retained,
+            but their reference and measurement location
+            are not confirmed here.
+          </li>
+
+          <li>
+            System pH is kept separate from handheld pH.
+            Recorded system dissolved-CO₂ values are not
+            treated as calibrated reference measurements.
+          </li>
+
+          <li>
+            CO₂ not accounted for as dissolved uptake
+            cannot automatically be classified entirely
+            as vented gas.
+          </li>
+
+          <li>
+            Collection timestamps are not collection
+            durations. Delivery rates per minute are
+            not inferred from them.
+          </li>
+
+          <li>
+            Uptake targets are user-defined.
+            No universal good-performance threshold
+            is assigned.
+          </li>
+
+          <li>
+            A target comparison shows an arithmetic
+            difference, without assigning a measurement
+            tolerance.
+          </li>
+        </ul>
       </details>
     </section>
 
-    <footer>
-      <span>CO₂ LAB / FLAMINGO WATER OPTIMIZATION</span>
-      <span>Experimental findings · Provisional operating choices</span>
+    <footer class="site-footer">
+      <span>CO₂ LAB / WATER OPTIMISATION</span>
+      <span>Experimental results / Test-based comparisons</span>
     </footer>
   </main>
 
-  <div id="tooltip" role="tooltip" hidden></div>
+  <!--
+    app.js shows this bar while the dose-calculator
+    section is in view. Both Calculate buttons submit
+    the same form.
+  -->
+
+  <div
+    id="calculate-bar"
+    class="calculate-bar"
+    aria-label="Dose calculation controls"
+    hidden
+  >
+    <div class="calculate-bar-inner">
+      <div class="calculate-bar-copy">
+        <strong>Dose calculator</strong>
+
+        <span
+          id="floating-calc-status"
+          role="status"
+        >
+          Ready to calculate
+        </span>
+      </div>
+
+      <button
+        id="calculate-floating"
+        class="button button-primary"
+        type="submit"
+        form="dose-form"
+      >
+        Calculate dose
+      </button>
+    </div>
+  </div>
+
+  <div
+    id="tooltip"
+    class="chart-tooltip"
+    role="tooltip"
+    hidden
+  ></div>
+
+  <noscript>
+    <p class="noscript-message">
+      Enable JavaScript to explore the results
+      and calculate doses.
+    </p>
+  </noscript>
 </body>
 </html>
